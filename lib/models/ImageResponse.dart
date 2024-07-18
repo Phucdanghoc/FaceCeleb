@@ -1,23 +1,24 @@
 class ImageUploadResponse {
-  final String imageUrl;
-  final String name;
+  final String label;
+  final int index;
+  final String url_image;
+  final String url_npy;
 
   ImageUploadResponse({
-    required this.imageUrl,
-    required this.name,
+    required this.url_image,
+    required this.url_npy,
+    required this.index,
+    required this.label,
   });
 
   factory ImageUploadResponse.fromJson(Map<String, dynamic> json) {
     return ImageUploadResponse(
-      imageUrl: json['image_url'] as String,
-      name: json['name'] as String,
+      url_image: json['url_image'] as String,
+      index: json['index'] ,
+      url_npy: json['url_npy'] as String,
+      label: json['label'] as String,
     );
   }
 
-  Map<String, dynamic> toJson() {
-    return {
-      'image_url': imageUrl,
-      'name': name,
-    };
-  }
+  
 }

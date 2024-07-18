@@ -16,7 +16,7 @@ class _ImageSelectionScreenState extends State<ImageSelectionScreen> {
   File? _selectedImage;
   bool _isLoading = false;
   final ImageRepository _repository =
-      ImageRepository('http://10.0.2.2:8000/api');
+      ImageRepository('https://3f4d-42-118-228-33.ngrok-free.app/api');
 
   Future<void> _pickImage(ImageSource source) async {
     final picker = ImagePicker();
@@ -41,16 +41,13 @@ class _ImageSelectionScreenState extends State<ImageSelectionScreen> {
 
     try {
       final response = await _repository.uploadImage(_selectedImage!);
-
       if (response != null) {
         Navigator.push(
           context,
           MaterialPageRoute(
             builder: (_) => ResultScreen(
-              yourImage: _selectedImage!,
-              compareImage: response.imageUrl,
-              similarityPercentage: "100",
-              similarityDescription: response.name,
+              yourImage: _selectedImage,
+              listImage: response,
             ),
           ),
         );

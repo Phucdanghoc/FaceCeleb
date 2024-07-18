@@ -21,35 +21,30 @@ class IntroScreen extends StatelessWidget {
         child: Column(
           mainAxisAlignment: MainAxisAlignment.start,
           children: [
-            Stack(
-              alignment: Alignment.topCenter,
-              children: [
-                Positioned(
-                    child: Image.asset(
-                  'assets/images/bg_intro.png',
-                  height: MediaQuery.of(context).size.height / 2,
-                  fit: BoxFit.fill,
-                )),
-                Positioned(
-                  top: 400,
-                  child: Container(
-                    alignment: Alignment.center,
-                    child: const Text(
-                      'Face Detection',
-                      style: TextStyle(
-                        color: Color.fromARGB(234, 255, 255, 255),
-                        fontSize: 40,
-                        fontWeight: FontWeight.bold,
-                      ),
-                    ),
-                  ),
-                )
-              ],
+            Expanded(
+              flex: 1,
+              child: Image.asset(
+                'assets/images/bg_intro.png',
+                width: double.infinity,
+                fit: BoxFit.cover,
+              ),
+            ),
+            Container(
+              alignment: Alignment.center,
+              margin: const EdgeInsets.only(top: 16),
+              child: const Text(
+                'Face Detection',
+                style: TextStyle(
+                  color: Color.fromARGB(234, 255, 255, 255),
+                  fontSize: 40,
+                  fontWeight: FontWeight.bold,
+                ),
+              ),
             ),
             const SizedBox(height: 16),
             Container(
               padding: const EdgeInsets.all(16.0),
-              margin: const EdgeInsets.symmetric(horizontal: 20, vertical: 40),
+              margin: const EdgeInsets.symmetric(horizontal: 20, vertical: 20),
               decoration: BoxDecoration(
                 borderRadius: BorderRadius.circular(16.0),
                 color: Colors.white,
@@ -62,10 +57,10 @@ class IntroScreen extends StatelessWidget {
                 ],
               ),
               child: const Text(
-                'It is a long established fact that a reader will be distracted by the readable content of a page when looking at its layout. The point of using Lorem Ipsum is that it has a more-or-less normal distribution of letters, as opposed to using \'Content here, content here\', making it look like readable English.',
+                'Our Celebrity Image Recognition App leverages a vast database of celebrity images and employs the powerful MobileNet model to accurately identify faces. Simply upload a photo, and our app will instantly recognize and provide information about the celebrity. With a user-friendly interface and real-time results, discovering your favorite celebrities has never been easier.',
                 textAlign: TextAlign.center,
                 style: TextStyle(
-                  fontSize: 16,
+                  fontSize: 13,
                 ),
               ),
             ),
@@ -86,10 +81,11 @@ class IntroScreen extends StatelessWidget {
                 ),
               ),
               child: const Text(
-                'Get Starting',
+                'Get Started',
                 style: TextStyle(color: Colors.white, fontSize: 20),
               ),
             ),
+            const SizedBox(height: 30),
           ],
         ),
       ),

@@ -1,21 +1,20 @@
 import 'dart:io';
+import 'package:face_celeb/models/ImageResponse.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/widgets.dart';
-import 'package:screenshot/screenshot.dart';
 import 'package:path_provider/path_provider.dart';
+import 'package:screenshot/screenshot.dart';
 
 class ResultScreen extends StatefulWidget {
   final File? yourImage;
-  final String? compareImage;
-  final String similarityPercentage;
-  final String similarityDescription;
+  final List<ImageUploadResponse> listImage;
+  
 
   const ResultScreen({
     super.key,
     required this.yourImage,
-    required this.compareImage,
-    required this.similarityPercentage,
-    required this.similarityDescription,
+    required this.listImage,
+ 
   });
 
   @override
@@ -114,39 +113,23 @@ class _ResultScreenState extends State<ResultScreen> {
                       child: Column(
                         children: [
                           _buildYourImagePreview(
-                              widget.yourImage, 'Your Image'),
+                              widget.yourImage, 'Your photograph closely resembles'),
+                          _buildImagePreview(
+                                    widget.listImage[0].url_image, widget.listImage[0].label),
                           Padding(
                             padding: const EdgeInsets.symmetric(vertical: 16.0),
+                            
                             child: Row(
                               mainAxisAlignment: MainAxisAlignment.spaceAround,
                               children: [
                                 _buildImagePreview(
-                                    widget.compareImage, 'Compare Image'),
+                                    widget.listImage[1].url_image, widget.listImage[0].label),
                                 _buildImagePreview(
-                                    widget.compareImage, 'Compare Image'),
-                                _buildImagePreview(
-                                    widget.compareImage, 'Compare Image'),
+                                    widget.listImage[2].url_image, widget.listImage[0].label),
                               ],
                             ),
                           ),
-                          const SizedBox(height: 10),
-                          const Text(
-                            'Your photograph closely resembles',
-                            style: TextStyle(
-                              fontSize: 16,
-                              color: Colors.white,
-                            ),
-                          ),
-                          const SizedBox(height: 10),
-                          Text(
-                            widget.similarityDescription,
-                            style: const TextStyle(
-                              fontSize: 24,
-                              fontWeight: FontWeight.bold,
-                              color: Colors.white,
-                            ),
-                          ),
-                          const SizedBox(height: 20),
+                          
                         ],
                       ),
                     ),
@@ -191,6 +174,7 @@ class _ResultScreenState extends State<ResultScreen> {
   }
 
   Widget _buildImagePreview(String? image, String label) {
+    image?.replaceAll("//","/");
     return Column(
       children: [
         Container(
@@ -205,23 +189,23 @@ class _ResultScreenState extends State<ResultScreen> {
             borderRadius: BorderRadius.circular(16),
             child: image != null
                 ? Image.network(
-                    image,
+                    "https://3f4d-42-118-228-33.ngrok-free.app/static/images/$image",
                     fit: BoxFit.cover,
                   )
-                : Center(
+                : const Center(
                     child: Text(
-                      label,
+                      "Image !",
                       textAlign: TextAlign.center,
-                      style: const TextStyle(color: Colors.grey, fontSize: 18),
+                      style: TextStyle(color: Colors.grey, fontSize: 18),
                     ),
                   ),
           ),
         ),
         const SizedBox(height: 8),
         Text(
-          label,
+          extractName(label),
           style: const TextStyle(
-            fontSize: 15,
+            fontSize: 14,
             fontWeight: FontWeight.bold,
             color: Colors.white,
           ),
@@ -234,6 +218,8 @@ class _ResultScreenState extends State<ResultScreen> {
     return Column(
       children: [
         Container(
+          padding: const EdgeInsets.all(8),
+          margin: EdgeInsets.only(bottom: 10),
           height: 160,
           width: 160,
           decoration: BoxDecoration(
@@ -268,5 +254,16 @@ class _ResultScreenState extends State<ResultScreen> {
         ),
       ],
     );
+  }
+  
+  String extractName(String input) {
+    List<String> parts = input.split('_');
+      if (parts.length >= 3) {
+        String name = '${parts[1]} ${parts[2]}';
+        print(name);
+        return name;
+      } else {
+        return "Name";
+      }
   }
 }

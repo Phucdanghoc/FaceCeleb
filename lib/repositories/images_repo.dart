@@ -10,7 +10,7 @@ class ImageRepository {
 
   ImageRepository(this.baseUrl);
 
-  Future<ImageUploadResponse?> uploadImage(File imageFile) async {
+  Future<List<ImageUploadResponse>?> uploadImage(File imageFile) async {
     final uri = Uri.parse('$baseUrl/upload');
     final request = http.MultipartRequest('POST', uri);
 
@@ -25,10 +25,10 @@ class ImageRepository {
     final responseBody = await response.stream.bytesToString();
 
     if (response.statusCode == 200) {
-      // Decode the JSON string to a Map
-      final Map<String, dynamic> data = jsonDecode(responseBody);
-      // Return the ImageUploadResponse object
-      return ImageUploadResponse.fromJson(data);
+      // Decode the JSON string to a List of Maps
+      final List<dynamic> data = jsonDecode(responseBody);
+      // Map each entry to an ImageUploadResponse object
+      return data.map((json) => ImageUploadResponse.fromJson(json)).toList();
     } else {
       print('Failed to upload image: ${response.statusCode}');
       return null;
