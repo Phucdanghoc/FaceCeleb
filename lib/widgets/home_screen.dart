@@ -16,7 +16,7 @@ class _ImageSelectionScreenState extends State<ImageSelectionScreen> {
   File? _selectedImage;
   bool _isLoading = false;
   final ImageRepository _repository =
-      ImageRepository('https://3f4d-42-118-228-33.ngrok-free.app/api');
+      ImageRepository('https://7c3d-42-118-236-176.ngrok-free.app/api');
 
   Future<void> _pickImage(ImageSource source) async {
     final picker = ImagePicker();

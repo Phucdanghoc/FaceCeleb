@@ -1,20 +1,17 @@
 import 'dart:io';
 import 'package:face_celeb/models/ImageResponse.dart';
 import 'package:flutter/material.dart';
-import 'package:flutter/widgets.dart';
 import 'package:path_provider/path_provider.dart';
 import 'package:screenshot/screenshot.dart';
 
 class ResultScreen extends StatefulWidget {
   final File? yourImage;
   final List<ImageUploadResponse> listImage;
-  
 
   const ResultScreen({
     super.key,
     required this.yourImage,
     required this.listImage,
- 
   });
 
   @override
@@ -34,15 +31,14 @@ class _ResultScreenState extends State<ResultScreen> {
       }
       String appDocumentsPath = directory.path;
 
-      String orangecardPath = '$appDocumentsPath/face';
-      Directory orangecardDirectory = Directory(orangecardPath);
-      if (!(await orangecardDirectory.exists())) {
-        await orangecardDirectory.create(recursive: true);
+      String screenshotPath = '$appDocumentsPath/face';
+      Directory screenshotDirectory = Directory(screenshotPath);
+      if (!(await screenshotDirectory.exists())) {
+        await screenshotDirectory.create(recursive: true);
       }
-      final path = '$orangecardPath/screenshot';
+      final path = '$screenshotPath/screenshot';
 
-      await screenshotController.captureAndSave(path,
-          fileName: 'screenshot.png');
+      await screenshotController.captureAndSave(path, fileName: 'screenshot.png');
       ScaffoldMessenger.of(context).showSnackBar(
         SnackBar(
           content: Text(
@@ -90,15 +86,11 @@ class _ResultScreenState extends State<ResultScreen> {
                   mainAxisSize: MainAxisSize.min,
                   children: [
                     Container(
-                      padding: const EdgeInsets.symmetric(
-                          horizontal: 10, vertical: 10),
+                      padding: const EdgeInsets.symmetric(horizontal: 10, vertical: 10),
                       decoration: BoxDecoration(
                         borderRadius: BorderRadius.circular(16),
                         gradient: const LinearGradient(
-                          colors: [
-                            Color.fromARGB(255, 96, 204, 253),
-                            Colors.blue
-                          ],
+                          colors: [Color.fromARGB(255, 96, 204, 253), Colors.blue],
                           begin: Alignment.topCenter,
                           end: Alignment.bottomCenter,
                         ),
@@ -112,24 +104,27 @@ class _ResultScreenState extends State<ResultScreen> {
                       ),
                       child: Column(
                         children: [
-                          _buildYourImagePreview(
-                              widget.yourImage, 'Your photograph closely resembles'),
-                          _buildImagePreview(
-                                    widget.listImage[0].url_image, widget.listImage[0].label),
-                          Padding(
-                            padding: const EdgeInsets.symmetric(vertical: 16.0),
-                            
-                            child: Row(
-                              mainAxisAlignment: MainAxisAlignment.spaceAround,
-                              children: [
-                                _buildImagePreview(
-                                    widget.listImage[1].url_image, widget.listImage[0].label),
-                                _buildImagePreview(
-                                    widget.listImage[2].url_image, widget.listImage[0].label),
-                              ],
+                          _buildYourImagePreview(widget.yourImage, 'Your photograph closely resembles'),
+                          Container(
+                            height: 400,
+                            child: GridView.builder(
+                              shrinkWrap: true,
+                              physics: const ClampingScrollPhysics(),
+                              gridDelegate: const SliverGridDelegateWithFixedCrossAxisCount(
+                                crossAxisCount: 2, 
+                                crossAxisSpacing: 15.0,
+                                mainAxisSpacing: 15.0,
+                              ),
+                              itemCount: widget.listImage.length,
+                              itemBuilder: (context, index) {
+                                return _buildImagePreview(
+                                  widget.listImage[index].url_image, 
+                                  widget.listImage[index].label,
+                                  widget.listImage[index].confidence
+                                );
+                              },
                             ),
                           ),
-                          
                         ],
                       ),
                     ),
@@ -143,12 +138,12 @@ class _ResultScreenState extends State<ResultScreen> {
                 Container(
                   padding: const EdgeInsets.symmetric(horizontal: 20),
                   decoration: const BoxDecoration(
-                      color: Colors.blue,
-                      borderRadius: BorderRadius.all(Radius.circular(20))),
+                    color: Colors.blue,
+                    borderRadius: BorderRadius.all(Radius.circular(20)),
+                  ),
                   child: IconButton(
                     padding: const EdgeInsets.all(5),
-                    icon: const Icon(Icons.arrow_back,
-                        color: Colors.white, size: 30),
+                    icon: const Icon(Icons.arrow_back, color: Colors.white, size: 30),
                     onPressed: () {
                       Navigator.of(context).pop();
                     },
@@ -157,8 +152,9 @@ class _ResultScreenState extends State<ResultScreen> {
                 Container(
                   padding: const EdgeInsets.symmetric(horizontal: 20),
                   decoration: const BoxDecoration(
-                      color: Colors.blue,
-                      borderRadius: BorderRadius.all(Radius.circular(20))),
+                    color: Colors.blue,
+                    borderRadius: BorderRadius.all(Radius.circular(20)),
+                  ),
                   child: IconButton(
                     icon: const Icon(Icons.download, color: Colors.white),
                     onPressed: _captureScreenshot,
@@ -166,15 +162,14 @@ class _ResultScreenState extends State<ResultScreen> {
                   ),
                 ),
               ],
-            )
+            ),
           ],
         ),
       ),
     );
   }
 
-  Widget _buildImagePreview(String? image, String label) {
-    image?.replaceAll("//","/");
+  Widget _buildImagePreview(String? imageUrl, String label,double confidence) {
     return Column(
       children: [
         Container(
@@ -187,9 +182,9 @@ class _ResultScreenState extends State<ResultScreen> {
           ),
           child: ClipRRect(
             borderRadius: BorderRadius.circular(16),
-            child: image != null
+            child: imageUrl != null
                 ? Image.network(
-                    "https://3f4d-42-118-228-33.ngrok-free.app/static/images/$image",
+                    "https://7c3d-42-118-236-176.ngrok-free.app/static/images/${imageUrl.replaceAll('//', '/')}",
                     fit: BoxFit.cover,
                   )
                 : const Center(
@@ -199,6 +194,15 @@ class _ResultScreenState extends State<ResultScreen> {
                       style: TextStyle(color: Colors.grey, fontSize: 18),
                     ),
                   ),
+          ),
+        ),
+        const SizedBox(height: 8),
+        Text(
+          confidence.toString(),
+          style: const TextStyle(
+            fontSize: 15,
+            fontWeight: FontWeight.bold,
+            color: Colors.white,
           ),
         ),
         const SizedBox(height: 8),
@@ -219,7 +223,7 @@ class _ResultScreenState extends State<ResultScreen> {
       children: [
         Container(
           padding: const EdgeInsets.all(8),
-          margin: EdgeInsets.only(bottom: 10),
+          margin: const EdgeInsets.only(bottom: 10),
           height: 160,
           width: 160,
           decoration: BoxDecoration(
@@ -255,15 +259,15 @@ class _ResultScreenState extends State<ResultScreen> {
       ],
     );
   }
-  
+
   String extractName(String input) {
     List<String> parts = input.split('_');
-      if (parts.length >= 3) {
-        String name = '${parts[1]} ${parts[2]}';
-        print(name);
-        return name;
-      } else {
-        return "Name";
-      }
+    if (parts.length >= 3) {
+      String name = '${parts[1]} ${parts[2]}';
+      print(name);
+      return name;
+    } else {
+      return "Name";
+    }
   }
 }
