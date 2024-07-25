@@ -20,6 +20,7 @@ class ResultScreen extends StatefulWidget {
 
 class _ResultScreenState extends State<ResultScreen> {
   final ScreenshotController screenshotController = ScreenshotController();
+  int _selectedImageCount = 4; // Default number of images to display
 
   Future<void> _captureScreenshot() async {
     try {
@@ -105,22 +106,43 @@ class _ResultScreenState extends State<ResultScreen> {
                       child: Column(
                         children: [
                           _buildYourImagePreview(widget.yourImage, 'Your photograph closely resembles'),
+                          DropdownButton<int>(
+                            dropdownColor: const Color.fromARGB(255, 108, 182, 242),
+                            value: _selectedImageCount,
+                            iconEnabledColor: Colors.white,
+                            iconDisabledColor: Colors.white,
+                            items: [2, 4, 6, 8, 10, 20]
+                                .map((e) => DropdownMenuItem<int>(
+                                      value: e,
+                                      child: Text('Top $e images',                            
+                                      style: TextStyle(color: Colors.white),),
+                                    ))
+                                .toList(),
+                            onChanged: (value) {
+                              setState(() {
+                                _selectedImageCount = value ?? 4;
+                              });
+                            },
+                          ),
                           Container(
                             height: 400,
                             child: GridView.builder(
                               shrinkWrap: true,
                               physics: const ClampingScrollPhysics(),
                               gridDelegate: const SliverGridDelegateWithFixedCrossAxisCount(
-                                crossAxisCount: 2, 
+                                crossAxisCount: 2,
                                 crossAxisSpacing: 15.0,
                                 mainAxisSpacing: 15.0,
                               ),
-                              itemCount: widget.listImage.length,
+                              itemCount: _selectedImageCount,
                               itemBuilder: (context, index) {
+                                if (index >= widget.listImage.length) {
+                                  return Container(); // Return an empty container if the index exceeds the list length
+                                }
                                 return _buildImagePreview(
-                                  widget.listImage[index].url_image, 
+                                  widget.listImage[index].url_image,
                                   widget.listImage[index].label,
-                                  widget.listImage[index].confidence
+                                  widget.listImage[index].confidence,
                                 );
                               },
                             ),
@@ -169,12 +191,12 @@ class _ResultScreenState extends State<ResultScreen> {
     );
   }
 
-  Widget _buildImagePreview(String? imageUrl, String label,double confidence) {
+  Widget _buildImagePreview(String? imageUrl, String label, double confidence) {
     return Column(
       children: [
         Container(
-          height: 100,
-          width: 100,
+          height: 120,
+          width: 120,
           decoration: BoxDecoration(
             border: Border.all(color: Colors.white, width: 4),
             borderRadius: BorderRadius.circular(20),
@@ -184,7 +206,7 @@ class _ResultScreenState extends State<ResultScreen> {
             borderRadius: BorderRadius.circular(16),
             child: imageUrl != null
                 ? Image.network(
-                    "https://7c3d-42-118-236-176.ngrok-free.app/static/images/${imageUrl.replaceAll('//', '/')}",
+                    "https://148d-2405-4802-9382-1263-54b1-1322-b3c4-decc.ngrok-free.app/static/images/${imageUrl.replaceAll('//', '/')}",
                     fit: BoxFit.cover,
                   )
                 : const Center(
